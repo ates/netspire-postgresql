@@ -31,6 +31,7 @@ start_pool(Size, Options) ->
 
 stop() ->
     ?INFO_MSG("Stopping dynamic module ~p~n", [?MODULE]),
+    application:unset_env(netspire, database_backend),
     supervisor:terminate_child(netspire_sup, pgsql_pool),
     supervisor:delete_child(netspire_sup, pgsql_pool).
 
