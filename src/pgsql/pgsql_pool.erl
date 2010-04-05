@@ -1,5 +1,5 @@
 %% This module is originally from Zotonic CMS.
-%% Look at LICENSE.zotonic for copyright holders.
+%% Look at LICENSE for copyright holders.
 -module(pgsql_pool).
 
 -behaviour(gen_server).
