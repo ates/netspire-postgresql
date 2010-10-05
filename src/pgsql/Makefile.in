@@ -2,7 +2,7 @@ SOURCES = $(wildcard *.erl)
 OUTDIR = ../../ebin
 BEAMS = $(addprefix $(OUTDIR)/,$(SOURCES:.erl=.beam))
 
-EFLAGS = -I ../@NETSPIRE_DIST@/src -pa ../@NETSPIRE_DIST@/ebin
+EFLAGS = -I ../../@NETSPIRE_DIST@/src -pa ../@NETSPIRE_DIST@/ebin
 
 all: $(BEAMS)
 

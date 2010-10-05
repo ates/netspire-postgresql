@@ -2,7 +2,7 @@
 
 -behaviour(gen_module).
 
--export([execute/2]).
+-export([execute/1, execute/2]).
 
 %% gen_module callbacks
 -export([start/1, stop/0]).
@@ -34,6 +34,9 @@ stop() ->
     application:unset_env(netspire, database_backend),
     supervisor:terminate_child(netspire_sup, pgsql_pool),
     supervisor:delete_child(netspire_sup, pgsql_pool).
+
+execute(Q) ->
+    execute(Q, []).
 
 execute(Q, Params) ->
     case pgsql_pool:get_connection() of

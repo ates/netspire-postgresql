@@ -10,6 +10,8 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
+-include("netspire.hrl").
+
 -record(state, {size, connections = [], monitors = [], waiting = [], options}).
 
 start_link(Size, Options) ->
@@ -32,9 +34,21 @@ return_connection(C) ->
 
 init([Size, Options]) ->
     process_flag(trap_exit, true),
-    {ok, C} = connect(Options),
-    State = #state{size = Size, connections = [C], waiting = queue:new(), options = Options},
-    {ok, State}.
+    case connect(Options) of
+        {ok, C} ->
+            ?INFO_MSG("Connection to the database successful established~n", []),
+            {ok, #state{size = Size, connections = [C], waiting = queue:new(), options = Options}};
+        {error, {{_, {_, Reason}}, _}} ->
+            ?ERROR_MSG("Cannot connect to the database due to ~s~n", [inet:format_error(Reason)]),
+            {ok, #state{}};
+        {error, Reason} when is_binary(Reason) ->
+            {Code, Msg} = pgsql_util:format_error(Reason),
+            ?ERROR_MSG("Cannot connect to the database due to ~s:~s~n", [Code, Msg]),
+            {ok, #state{}};
+        {error, Reason} when is_atom(Reason) ->
+            ?ERROR_MSG("Cannot connect to the database due to ~p~n", [Reason]),
+            {ok, #state{}}
+    end.
 
 handle_call(get_connection, From, #state{connections = Connections, waiting = Waiting} = State) ->
     case Connections of
