@@ -47,6 +47,6 @@ execute(Q, Params) ->
                 pgsql_pool:return_connection(C)
             end;
         {error, timeout} ->
-            ?INFO_MSG("Unable to obtain database connection due to timeout~n", []),
+            ?ERROR_MSG("Unable to obtain database connection due to timeout~n", []),
             {error, timeout}
     end.
